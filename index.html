@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <title>Demo DIP - Cafetería</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background: #f0f0f0;
+      padding: 2rem;
+      max-width: 600px;
+      margin: auto;
+    }
+    h1 {
+      color: #333;
+    }
+    select, button {
+      padding: 0.5rem;
+      font-size: 1rem;
+      margin-top: 1rem;
+      margin-right: 0.5rem;
+    }
+    #log {
+      margin-top: 1rem;
+      padding: 1rem;
+      background: #fff;
+      border: 1px solid #ccc;
+      border-radius: 5px;
+      min-height: 50px;
+    }
+  </style>
+</head>
+<body>
+
+  <h1>☕ Cafetería - Demo DIP</h1>
+  <p>Selecciona el tipo de notificación y entrega el pedido:</p>
+
+  <select id="tipoNotificador">
+    <option value="pantalla">Pantalla</option>
+    <option value="consola">Consola</option>
+  </select>
+
+  <button onclick="entregarPedido()">Entregar pedido</button>
+
+  <div id="log"></div>
+
+  <script>
+    // Abstracción
+    class Notificador {
+      enviar(mensaje) {
+        throw "Método no implementado";
+      }
+    }
+
+    // Implementación 1: Pantalla
+    class NotificadorPorPantalla extends Notificador {
+      enviar(mensaje) {
+        document.getElementById("log").innerText = mensaje;
+      }
+    }
+
+    // Implementación 2: Consola
+    class NotificadorPorConsola extends Notificador {
+      enviar(mensaje) {
+        console.log("Notificación:", mensaje);
+        document.getElementById("log").innerText = "(Ver consola para la notificación)";
+      }
+    }
+
+    // Módulo de alto nivel
+    class Cafeteria {
+      constructor(notificador) {
+        this.notificador = notificador;
+      }
+
+      entregarPedido() {
+        this.notificador.enviar("✅ Tu pedido está listo. ¡Gracias por tu compra!");
+      }
+    }
+
+    // Función principal
+    function entregarPedido() {
+      const tipo = document.getElementById("tipoNotificador").value;
+      let notificador;
+
+      if (tipo === "pantalla") {
+        notificador = new NotificadorPorPantalla();
+      } else if (tipo === "consola") {
+        notificador = new NotificadorPorConsola();
+      }
+
+      const cafeteria = new Cafeteria(notificador);
+      cafeteria.entregarPedido();
+    }
+  </script>
+
+</body>
+</html>
